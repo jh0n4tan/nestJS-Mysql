@@ -3,6 +3,7 @@ import { ConflictException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductDto } from './dto/product.dto';
+import { StockDto } from './dto/stock.dto';
 import { Product } from './entity/product.entity';
 
 @Injectable()
@@ -50,6 +51,7 @@ export class ProductService {
         );
     }
 
+
     async restoreProduct(id:number){
         const productFound = await this.findProduct(id);        
         if(!productFound) throw new ConflictException("product id doesn't exists");         
@@ -57,6 +59,15 @@ export class ProductService {
         await this.productRepository.update(
             {id:id},
             {deleted:false}
+        );
+    }
+
+    async updateStock(stock:StockDto){
+        const productFound = await this.findProduct(stock.id);        
+        if(!productFound) throw new ConflictException("product id doesn't exists");                 
+        await this.productRepository.update(
+            {id:stock.id},
+            {stock:stock.stock}
         );
     }
 }
